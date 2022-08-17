@@ -28,6 +28,9 @@
 #include <memory>
 #include <rmw/types.h>
 
+//#include <rmw/qos_profiles.h>
+#include <rclcpp/qos.hpp>
+
 using namespace std::chrono_literals;
 
 #include <mutex>
@@ -154,8 +157,10 @@ public:
 		this->declare_parameter<std::string>("amcl_pose", "amcl_pose");
 		this->get_parameter("amcl_pose", m_amcl_pose);
 
-    this->declare_parameter<bool>("broadcast_info", false);
-    this->get_parameter("broadcast_info", m_broadcast_info);
+    	this->declare_parameter<bool>("broadcast_info", false);
+    	this->get_parameter("broadcast_info", m_broadcast_info);
+
+		qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_amcl_pose_qos);
 
 		m_map_update_thread = std::thread(&NeoLocalizationNode::update_loop, this);
 
@@ -166,7 +171,7 @@ public:
 		m_sub_pose_estimate = this->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(m_initial_pose, 1, std::bind(&NeoLocalizationNode::pose_callback, this, _1));
 
 		m_pub_map_tile = this->create_publisher<nav_msgs::msg::OccupancyGrid>(m_map_tile, 1);
-		m_pub_loc_pose = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(m_amcl_pose, rmw_qos_profile_amcl_pose_qos);
+		m_pub_loc_pose = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(m_amcl_pose, qos);
 		m_pub_loc_pose_2 = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(m_map_pose, 10);
 		m_pub_pose_array = this->create_publisher<geometry_msgs::msg::PoseArray>(m_particle_cloud, 10);
 
@@ -799,6 +804,7 @@ private:
 		false
  	};
 
+	auto qos;
 };
 
 
