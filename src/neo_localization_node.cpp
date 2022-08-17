@@ -26,7 +26,6 @@
 #include <tf2_ros/buffer.h>
 #include <chrono>
 #include <memory>
-#include <qos.hpp>
 #include <rmw/types.h>
 
 using namespace std::chrono_literals;
