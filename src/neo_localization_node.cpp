@@ -51,20 +51,6 @@ using std::placeholders::_2;
  *
  */
 
- static const rmw_qos_profile_t rmw_qos_profile_amcl_pose_qos =
- {
-	RMW_QOS_POLICY_HISTORY_KEEP_LAST,
-	10,
-	RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-	RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL,
-	RMW_QOS_DEADLINE_DEFAULT,
-	RMW_QOS_LIFESPAN_DEFAULT,
-	RMW_QOS_POLICY_LIVELINESS_SYSTEM_DEFAULT,
-	RMW_QOS_LIVELINESS_LEASE_DURATION_DEFAULT,
-	false
- };
-
-
 class NeoLocalizationNode : public rclcpp::Node {
 public:
 	NeoLocalizationNode(): Node("neo_localization_node")
@@ -799,6 +785,19 @@ private:
 	std::thread m_map_update_thread;
 	bool m_broadcast_info;
 	rclcpp::TimerBase::SharedPtr m_loc_update_timer;
+
+	static const rmw_qos_profile_t rmw_qos_profile_amcl_pose_qos =
+ 	{
+		RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+		10,
+		RMW_QOS_POLICY_RELIABILITY_RELIABLE,
+		RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL,
+		RMW_QOS_DEADLINE_DEFAULT,
+		RMW_QOS_LIFESPAN_DEFAULT,
+		RMW_QOS_POLICY_LIVELINESS_SYSTEM_DEFAULT,
+		RMW_QOS_LIVELINESS_LEASE_DURATION_DEFAULT,
+		false
+ 	};
 
 };
 
