@@ -26,6 +26,8 @@
 #include <tf2_ros/buffer.h>
 #include <chrono>
 #include <memory>
+#include <qos.hpp>
+#include <rmw/types.h>
 
 using namespace std::chrono_literals;
 
@@ -49,6 +51,21 @@ using std::placeholders::_2;
  * - Tile Grid in [pixels]
  *
  */
+
+ static const rmw_qos_profile_t rmw_qos_profile_amcl_pose_qos =
+ {
+	RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+	10,
+	RMW_QOS_POLICY_RELIABILITY_RELIABLE,
+	RMW_QOS_POLICY_RELIABILITY_TRANSIENT_LOCAL,
+	RMW_QOS_DEADLINE_DEFAULT,
+	RMW_QOS_LIFESPAN_DEFAULT,
+	RMW_QOS_POLICY_LIVELINESS_SYSTEM_DEFAULT,
+	RMW_QOS_LIVELINESS_LEASE_DURATION_DEFAULT,
+	false
+ };
+
+
 class NeoLocalizationNode : public rclcpp::Node {
 public:
 	NeoLocalizationNode(): Node("neo_localization_node")
@@ -164,7 +181,7 @@ public:
 		m_sub_pose_estimate = this->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(m_initial_pose, 1, std::bind(&NeoLocalizationNode::pose_callback, this, _1));
 
 		m_pub_map_tile = this->create_publisher<nav_msgs::msg::OccupancyGrid>(m_map_tile, 1);
-		m_pub_loc_pose = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(m_amcl_pose, 10);
+		m_pub_loc_pose = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(m_amcl_pose, rmw_qos_profile_amcl_pose_qos);
 		m_pub_loc_pose_2 = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(m_map_pose, 10);
 		m_pub_pose_array = this->create_publisher<geometry_msgs::msg::PoseArray>(m_particle_cloud, 10);
 
