@@ -175,7 +175,7 @@ public:
     	this->get_parameter("broadcast_info", m_broadcast_info);
 
 		rmw_qos_profile_t amcl_qos = rmw_qos_profile_amcl_pose_qos;
-		auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(amcl_qos));
+		auto qos = rclcpp::QoS(rclcpp::QoSInitialization(amcl_qos.history, amcl_qos.depth), amcl_qos);
 
 		m_map_update_thread = std::thread(&NeoLocalizationNode::update_loop, this);
 
